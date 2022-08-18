@@ -5,6 +5,8 @@ import java.awt.Component;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
+import org.jdesktop.animation.timing.TimingTarget;
+import org.jdesktop.animation.timing.TimingTargetAdapter;
 
 
 public class Slide extends javax.swing.JLayeredPane {
@@ -19,6 +21,15 @@ public class Slide extends javax.swing.JLayeredPane {
  
     public Slide() {
         initComponents();
+        layout = new MigLayout("inset 0");
+        panel = new JPanel();
+        TimingTarget target = new TimingTargetAdapter(
+        );
+        
+        animate = new Animator(1000, target);
+        animate.setResolution(0);
+        animate.setAcceleration(0.5f);
+        animate.setDeceleration(0.5f);
     }
 
    

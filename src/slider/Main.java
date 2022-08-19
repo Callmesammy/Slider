@@ -12,7 +12,7 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         SlideCom.getSlider(new Slider1(), new Slider2());
     }
-
+m
   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

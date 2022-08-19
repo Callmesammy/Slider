@@ -12,69 +12,97 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
  *
  * @author user
  */
+/**
+ *
+ * @author user
+ */
 public class Slide extends javax.swing.JLayeredPane {
 
-  private final Animator animate;
-  private final MigLayout layout;
-  private final JPanel panel;
-  private Component componentShow;
-  private Component ComponentOut;
-  private int SelectedIndex;
-  private boolean selected;
-  
+    private final MigLayout layout;
+    private final JPanel panel;
+    private final Animator animate;
+    private Component componentShow;
+    private Component componentOut;
+    private boolean selected;
+    private int Selectedindex;
+    
     public Slide() {
-        initComponents();
-        layout = new MigLayout("inset 0");
-        panel = new JPanel();
-        TimingTarget target = new TimingTargetAdapter();
-        
-        animate = new Animator(1000, target);
-        animate.setResolution(0);
-        animate.setAcceleration(0.5f);
-        animate.setDeceleration(0.5f);
-        panel.setLayout(layout);
-        setLayout(new MigLayout("fill, inset 0", "[fill, center]", "3[fill]3"));
-        add(panel, "w 100%");
-    }
+    layout = new MigLayout("inset 0");
+    panel = new JPanel();
+    TimingTarget target = new TimingTargetAdapter(){
+        @Override
+        public void begin() {
+       componentShow.setVisible(true);
+       componentOut.setVisible(false);
+        }
 
-    public void getSlider(Component ...com){
-        if (com.length >= 2) {
-            for(Component coms : com){
-                coms.setVisible(false);
-                panel.add(coms, "pos 0 0 0 0");
+        @Override
+        public void timingEvent(float fraction) {
+        double width = panel.getWidth();
+        int location = (int) (width * fraction);
+        int locationShow = (int) (width * (1f-fraction));
+            if (selected) {
+                layout.setComponentConstraints(componentShow, "pos "+locationShow+" 0 100% 100%, width 100%!");
+                layout.setComponentConstraints(componentOut, "pos -" +location+" 0" +(width -location)+" 100%");
+                
+            }else{
+                
             }
+            panel.revalidate();
         }
-        if(panel.getComponentCount()>0){
-            componentShow = panel.getComponent(0);
-            componentShow.setVisible(true);
-            layout.setComponentConstraints(componentShow, "pos 0 0 100% 100%");
-        }
-    }
 
-    private void Next(){
-        if (animate.isRunning()) {
-            selected = true;
-            SelectedIndex = setNext(SelectedIndex);
-            componentShow = panel.getComponent(SelectedIndex);
-            ComponentOut = panel.getComponent(SelectedIndex -1);
-            animate.start();
-            
+        @Override
+        public void end() {
+        componentOut.setVisible(false);
+        layout.setComponentConstraints(componentOut, "pos 0 0 100% 100%, width 100%");
         }
         
-    }
-    private int setNext(int index){
-        if (index == panel.getComponentCount() -1) {
-            return 0;
-        }else{
-            return index;
-        }
-        
+    };
+    animate = new Animator(1000, target);
+    animate.setResolution(0);
+    animate.setAcceleration(0.5f);
+    animate.setDeceleration(0.5f);
+    panel.setLayout(layout);
+    setLayout(new MigLayout("fill, inset 0", "[fill, center]", "3[fill]3"));
+        add(panel, " w 100%-6!");
     }
     
-    private int checkNext(int index){
+    public void getSlider(Component ...com){
+        if (com.length >=2) {
+            for(Component coms: com){
+                coms.setVisible(false);
+                panel.add(coms, "pos 0 0 0 0");        
+        }   
+            if (panel.getComponentCount() > 0) {
+                componentShow = panel.getComponent(0);
+                componentShow.setVisible(true);
+                layout.setComponentConstraints(componentShow, "pos 0 0 100% 100%");
+            }
+            
+        
+        }
+    }
+
+ 
+    public void selected(){
+        if (!animate.isRunning()) {
+            selected = true;
+            Selectedindex = getSelected(Selectedindex);
+            componentShow = panel.getComponent(Selectedindex);
+            componentOut = panel.getComponent(checkSelected(Selectedindex-1));
+            animate.start();
+        }
+    }
+    private int getSelected (int index){
+        if (index == panel.getComponentCount()-1) {
+            return 0;
+        }else{
+            return index +1;
+        }
+    }
+    private int checkSelected(int index){
         if (index == -1) {
             return panel.getComponentCount() -1;
-            
         }else{
             return index;
         }

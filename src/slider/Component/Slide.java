@@ -33,20 +33,23 @@ public class Slide extends javax.swing.JLayeredPane {
         @Override
         public void begin() {
        componentShow.setVisible(true);
-       componentOut.setVisible(false);
+       componentOut.setVisible(true);
         }
 
         @Override
         public void timingEvent(float fraction) {
         double width = panel.getWidth();
         int location = (int) (width * fraction);
-        int locationShow = (int) (width * (1f-fraction));
+        int locationShow = (int) (width * (1f - fraction));
             if (selected) {
-                layout.setComponentConstraints(componentShow, "pos "+locationShow+" 0 100% 100%, width 100%!");
-                layout.setComponentConstraints(componentOut, "pos -" +location+" 0" +(width -location)+" 100%");
+                layout.setComponentConstraints(componentShow, "pos " +locationShow+ " 0 100% 100%, w 100%!");
+                layout.setComponentConstraints(componentOut, "pos -" +location+ " 0 " +(width -location) + " 100%");
                 
             }else{
-                
+                 layout.setComponentConstraints(componentShow, "pos -" +locationShow+ " 0 " +(width -locationShow)+ " 100%");
+                layout.setComponentConstraints(componentOut, "pos " +location+ " 0 100% 100%, width 100%!");
+               
+              
             }
             panel.revalidate();
         }
@@ -83,6 +86,7 @@ public class Slide extends javax.swing.JLayeredPane {
         }
     }
 
+   
  
     public void selected(){
         if (!animate.isRunning()) {
@@ -100,6 +104,16 @@ public class Slide extends javax.swing.JLayeredPane {
             return index +1;
         }
     }
+    public void Back(){
+        if (!animate.isRunning()) {
+            selected = false;
+            Selectedindex = goBack(Selectedindex);
+            componentShow = panel.getComponent(Selectedindex);
+            componentOut = panel.getComponent(checkBack(Selectedindex +1));
+            animate.start();
+        }
+    }
+    
     private int checkSelected(int index){
         if (index == -1) {
             return panel.getComponentCount() -1;
@@ -107,6 +121,23 @@ public class Slide extends javax.swing.JLayeredPane {
             return index;
         }
     }
+    
+    private int goBack(int index){
+        if (index == 0) {
+            return panel.getComponentCount() -1;
+        }else{
+            return index -1;
+        }
+    }
+    
+    private int checkBack(int index){
+        if (index == panel.getComponentCount()) {
+            return 0;
+        }else{
+            return index;
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
